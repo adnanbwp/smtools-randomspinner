@@ -8,7 +8,7 @@ export const parseCSV = (input) => {
         const items = results.data
           .flat()
           .filter(item => item.trim() !== '')
-          .slice(0, 30);
+          .slice(0, 35);
         resolve(items);
       },
       error: (error) => {
