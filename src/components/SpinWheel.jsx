@@ -67,9 +67,9 @@ const SpinWheel = ({ items, onSpinComplete }) => {
           const largeArcFlag = endPercent - startPercent > 0.5 ? 1 : 0;
           
           const pathData = [
-            `M ${startX} ${startY}`, // Move to start point
-            `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`, // Draw arc
-            `L 0 0`, // Line to center
+            `M ${startX} ${startY}`,
+            `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`,
+            `L 0 0`,
           ].join(' ');
           
           const midPercent = (startPercent + endPercent) / 2;
@@ -97,8 +97,8 @@ const SpinWheel = ({ items, onSpinComplete }) => {
       </animated.svg>
       <button 
         onClick={spinWheel} 
-        disabled={isSpinning}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+        disabled={isSpinning || items.length === 0}
+        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSpinning ? 'Spinning...' : 'Spin'}
       </button>
