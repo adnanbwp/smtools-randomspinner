@@ -44,12 +44,14 @@ function App() {
     showToast(error.message || 'An error occurred', 'error');
   };
 
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Spin Wheel App</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SpinWheel items={items} onSpinComplete={handleSpinComplete} />
-        <div>
+    return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">Spin Wheel App</h1>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="w-full lg:w-2/3">
+          <SpinWheel items={items} onSpinComplete={handleSpinComplete} />
+        </div>
+        <div className="w-full lg:w-1/3">
           <Controls 
             onItemsLoaded={handleItemsLoaded} 
             onClearItems={handleClearItems}
