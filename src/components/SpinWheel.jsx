@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useSpring, animated } from 'react-spring';
 
-const SpinWheel = ({ items }) => {
+const SpinWheel = ({ items, onSpinComplete }) => {
+  const [rotation, setRotation] = useState(0);
+  const [isSpinning, setIsSpinning] = useState(false);
+
   const colors = [
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', 
     '#98D8C8', '#FBCB0A', '#B19CD9', '#FF6B6B'
@@ -17,10 +21,33 @@ const SpinWheel = ({ items }) => {
     return [x, y];
   };
 
+  const spinWheel = () => {
+    if (isSpinning) return;
+    setIsSpinning(true);
+    const newRotation = rotation + 1800 + Math.random() * 720; // 5-7 full rotations
+    setRotation(newRotation);
+    
+    setTimeout(() => {
+      setIsSpinning(false);
+      const selectedIndex = Math.floor(((360 - (newRotation % 360)) / (360 / totalItems)) % totalItems);
+      onSpinComplete(items[selectedIndex]);
+    }, 5000);
+  };
+
+  const { transform } = useSpring({
+    transform: `rotate(${rotation}deg)`,
+    config: { mass: 1, tension: 170, friction: 26 },
+  });
+
   return (
     <div className="spin-wheel">
       <h2 className="text-2xl font-bold mb-4">Spin Wheel</h2>
-      <svg width={wheelRadius * 2} height={wheelRadius * 2} viewBox={`0 0 ${wheelRadius * 2} ${wheelRadius * 2}`}>
+      <animated.svg 
+        width={wheelRadius * 2} 
+        height={wheelRadius * 2} 
+        viewBox={`0 0 ${wheelRadius * 2} ${wheelRadius * 2}`}
+        style={{ transform }}
+      >
         {items.map((item, index) => {
           const startPercent = index / totalItems;
           const endPercent = (index + 1) / totalItems;
@@ -59,7 +86,14 @@ const SpinWheel = ({ items }) => {
             </g>
           );
         })}
-      </svg>
+      </animated.svg>
+      <button 
+        onClick={spinWheel} 
+        disabled={isSpinning}
+        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        {isSpinning ? 'Spinning...' : 'Spin'}
+      </button>
     </div>
   );
 };
