@@ -7,16 +7,13 @@ const SpinWheel = ({ items, onSpinComplete }) => {
   const [wheelSize, setWheelSize] = useState(400);
   const wheelRef = useRef(null);
 
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', 
-    '#98D8C8', '#FBCB0A', '#B19CD9', '#FF6B6B'
-  ];
+  const colors = ['#0015ff', '#ff00a1', '#90fe00', '#8400ff', '#00fff7', '#ff7300'];
 
   useEffect(() => {
     const handleResize = () => {
       if (wheelRef.current) {
         const containerWidth = wheelRef.current.offsetWidth;
-        setWheelSize(Math.min(containerWidth, 400));
+        setWheelSize(Math.min(containerWidth, 600));
       }
     };
 
@@ -28,73 +25,102 @@ const SpinWheel = ({ items, onSpinComplete }) => {
   const spinWheel = () => {
     if (isSpinning) return;
     setIsSpinning(true);
-    const newRotation = rotation + 1800 + Math.random() * 720; // 5-7 full rotations
-    setRotation(newRotation);
     
+    const spinDuration = 5000; // 5 seconds
+    const minSpins = 5; // Minimum number of full rotations
+    const maxSpins = 10; // Maximum number of full rotations
+    const anglePerItem = 360 / items.length;
+    
+    // Calculate total rotation
+    const totalSpins = minSpins + Math.random() * (maxSpins - minSpins);
+    const extraAngle = Math.floor(Math.random() * items.length) * anglePerItem;
+    const totalRotation = totalSpins * 360 + extraAngle;
+    
+    const newRotation = rotation + totalRotation;
+    setRotation(newRotation);
+
     setTimeout(() => {
       setIsSpinning(false);
-      const selectedIndex = Math.floor(((360 - (newRotation % 360)) / (360 / items.length)) % items.length);
+      const selectedIndex = items.length - 1 - Math.floor((newRotation % 360) / anglePerItem);
       onSpinComplete(items[selectedIndex]);
-    }, 5000);
+    }, spinDuration);
   };
 
   const { transform } = useSpring({
     transform: `rotate(${rotation}deg)`,
-    config: { mass: 1, tension: 170, friction: 26 },
+    config: { duration: 5000, easing: t => 1 - Math.pow(1 - t, 4) },
   });
 
-  const getCoordinatesForPercent = (percent) => {
-    const x = Math.cos(2 * Math.PI * percent);
-    const y = Math.sin(2 * Math.PI * percent);
-    return [x, y];
+  const createWheel = () => {
+    const total = items.length;
+    const angleSlice = 360 / total;
+    const radius = 1.0;
+
+    return items.map((item, index) => {
+      const angle = index * angleSlice;
+      const startAngle = angle * (Math.PI / 180);
+      const endAngle = (angle + angleSlice) * (Math.PI / 180);
+
+      const startX = radius * Math.cos(startAngle);
+      const startY = radius * Math.sin(startAngle);
+      const endX = radius * Math.cos(endAngle);
+      const endY = radius * Math.sin(endAngle);
+
+      const midAngle = (startAngle + endAngle) / 2;
+      const textX = (radius * 0.75) * Math.cos(midAngle);
+      const textY = (radius * 0.75) * Math.sin(midAngle);
+
+      const largeArcFlag = angleSlice <= 180 ? "0" : "1";
+
+      const pathData = `M ${startX} ${startY} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} L 0 0`;
+
+      return (
+        <g key={index}>
+          <path d={pathData} fill={colors[index % colors.length]} />
+          <text
+            x={textX}
+            y={textY}
+            fontSize="0.1"
+            fill="white"
+            fontWeight="bold"
+            textAnchor="middle"
+            alignmentBaseline="middle"
+            transform={`rotate(${angle + angleSlice / 2}, ${textX}, ${textY})`}
+          >
+            {item.length > 12 ? `${item.slice(0, 10)}...` : item}
+          </text>
+        </g>
+      );
+    });
   };
 
   return (
     <div className="spin-wheel" ref={wheelRef}>
-      <animated.svg 
-        width={wheelSize} 
-        height={wheelSize} 
-        viewBox="-1 -1 2 2"
-        style={{ transform, transformOrigin: 'center' }}
-      >
-        {items.map((item, index) => {
-          const startPercent = index / items.length;
-          const endPercent = (index + 1) / items.length;
-          
-          const [startX, startY] = getCoordinatesForPercent(startPercent);
-          const [endX, endY] = getCoordinatesForPercent(endPercent);
-          
-          const largeArcFlag = endPercent - startPercent > 0.5 ? 1 : 0;
-          
-          const pathData = [
-            `M ${startX} ${startY}`,
-            `A 1 1 0 ${largeArcFlag} 1 ${endX} ${endY}`,
-            `L 0 0`,
-          ].join(' ');
-          
-          const midPercent = (startPercent + endPercent) / 2;
-          const [labelX, labelY] = getCoordinatesForPercent(midPercent);
-          const textRotation = (midPercent * 360 + 90) % 360;
-
-          return (
-            <g key={index}>
-              <path d={pathData} fill={colors[index % colors.length]} />
-              <text
-                x={labelX * 0.65}
-                y={labelY * 0.65}
-                dy=".35em"
-                textAnchor="middle"
-                fill="white"
-                fontSize="0.1"
-                fontWeight="bold"
-                transform={`rotate(${textRotation}, ${labelX * 0.65}, ${labelY * 0.65})`}
-              >
-                {item.length > 10 ? item.substr(0, 10) + '...' : item}
-              </text>
-            </g>
-          );
-        })}
-      </animated.svg>
+      <div style={{ position: 'relative', width: wheelSize, height: wheelSize }}>
+        <animated.svg 
+          width={wheelSize} 
+          height={wheelSize} 
+          viewBox="-1 -1 2 2"
+          style={{ transform, transformOrigin: 'center' }}
+        >
+          {createWheel()}
+        </animated.svg>
+        <div 
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: '0px',
+            transform: 'translateY(-50%)',
+            width: '0',
+            height: '0',
+            borderTop: '20px solid transparent',
+            borderBottom: '20px solid transparent',
+            borderRight: '30px solid white',
+            filter: 'drop-shadow(0px 0px 1px black)',
+            zIndex: 10
+          }}
+        />
+      </div>
       <button 
         onClick={spinWheel} 
         disabled={isSpinning || items.length === 0}
