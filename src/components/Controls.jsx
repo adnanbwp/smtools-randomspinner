@@ -1,16 +1,18 @@
 import React from 'react';
 import { parseCSV } from '../services/csvService';
 
-const Controls = ({ onItemsLoaded, onClearItems }) => {
+const Controls = ({ onItemsLoaded, onClearItems, onError }) => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       try {
         const items = await parseCSV(file);
+        if (items.length === 0) {
+          throw new Error('No valid items found in the CSV file');
+        }
         onItemsLoaded(items);
       } catch (error) {
-        console.error('Error parsing CSV:', error);
-        // TODO: Add user-friendly error handling
+        onError(error);
       }
     }
   };
