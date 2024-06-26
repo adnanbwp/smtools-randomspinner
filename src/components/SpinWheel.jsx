@@ -22,8 +22,13 @@ const SpinWheel = ({ items, onSpinComplete }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Add this effect to reset rotation when items change
+  useEffect(() => {
+    setRotation(0);
+  }, [items]);
+
   const spinWheel = () => {
-    if (isSpinning) return;
+    if (isSpinning || items.length === 0) return;
     setIsSpinning(true);
     
     const spinDuration = 5000; // 5 seconds
@@ -96,38 +101,46 @@ const SpinWheel = ({ items, onSpinComplete }) => {
 
   return (
     <div className="spin-wheel" ref={wheelRef}>
-      <div style={{ position: 'relative', width: wheelSize, height: wheelSize }}>
-        <animated.svg 
-          width={wheelSize} 
-          height={wheelSize} 
-          viewBox="-1 -1 2 2"
-          style={{ transform, transformOrigin: 'center' }}
-        >
-          {createWheel()}
-        </animated.svg>
-        <div 
-          style={{
-            position: 'absolute',
-            top: '50%',
-            right: '0px',
-            transform: 'translateY(-50%)',
-            width: '0',
-            height: '0',
-            borderTop: '20px solid transparent',
-            borderBottom: '20px solid transparent',
-            borderRight: '30px solid white',
-            filter: 'drop-shadow(0px 0px 1px black)',
-            zIndex: 10
-          }}
-        />
-      </div>
-      <button 
-        onClick={spinWheel} 
-        disabled={isSpinning || items.length === 0}
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isSpinning ? 'Spinning...' : 'Spin'}
-      </button>
+      {items.length === 0 ? (
+        <div className="text-center py-8 text-gray-500">
+          No items loaded. Please add items to spin the wheel.
+        </div>
+      ) : (
+        <>
+          <div style={{ position: 'relative', width: wheelSize, height: wheelSize }}>
+            <animated.svg 
+              width={wheelSize} 
+              height={wheelSize} 
+              viewBox="-1 -1 2 2"
+              style={{ transform, transformOrigin: 'center' }}
+            >
+              {createWheel()}
+            </animated.svg>
+            <div 
+              style={{
+                position: 'absolute',
+                top: '50%',
+                right: '0px',
+                transform: 'translateY(-50%)',
+                width: '0',
+                height: '0',
+                borderTop: '20px solid transparent',
+                borderBottom: '20px solid transparent',
+                borderRight: '30px solid white',
+                filter: 'drop-shadow(0px 0px 1px black)',
+                zIndex: 10
+              }}
+            />
+          </div>
+          <button 
+            onClick={spinWheel} 
+            disabled={isSpinning}
+            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSpinning ? 'Spinning...' : 'Spin'}
+          </button>
+        </>
+      )}
     </div>
   );
 };
