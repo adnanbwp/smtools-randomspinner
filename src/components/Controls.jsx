@@ -1,7 +1,7 @@
 import React from 'react';
 import { parseCSV } from '../services/csvService';
 
-const Controls = ({ onItemsLoaded }) => {
+const Controls = ({ onItemsLoaded, onClearItems }) => {
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -18,15 +18,18 @@ const Controls = ({ onItemsLoaded }) => {
   return (
     <div className="controls">
       <h2 className="text-xl font-bold mb-2">Controls</h2>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-        Spin
-      </button>
       <input 
         type="file" 
         accept=".csv" 
-        className="mt-2" 
+        className="mb-2" 
         onChange={handleFileUpload}
       />
+      <button 
+        onClick={onClearItems}
+        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2"
+      >
+        Clear Items
+      </button>
     </div>
   );
 };
