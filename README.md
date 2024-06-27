@@ -1,8 +1,37 @@
-# React + Vite
+# Spin Wheel App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, interactive spin wheel application built with React.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Upload a CSV file with names or items
+- Dynamically generate a colorful spin wheel
+- Animate wheel spin and randomly select an item
+- Responsive design for various screen sizes
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run the app: `npm run dev`
+
+## Usage
+
+1. Upload a CSV file with your list of items
+2. Click the "Spin" button to rotate the wheel
+3. The selected item will be displayed after the spin
+
+## Technologies Used
+
+- React
+- Vite
+- Tailwind CSS
+- React Spring (for animations)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
