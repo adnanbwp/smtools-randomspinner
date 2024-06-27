@@ -25,7 +25,7 @@ function App() {
     setItems(newItems);
     saveItems(newItems);
     setSelectedItem(null);
-    showToast('Items loaded successfully');
+    showToast('Items loaded successfully', 'success', newItems.length);
   };
 
   const handleSpinComplete = (item) => {
