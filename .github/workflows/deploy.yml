@@ -1,28 +1,28 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
     branches:
       - main
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
+      # Add these new steps
+      - name: Clear npm cache
+        run: npm cache clean --force
+      - name: Remove node_modules
+        run: rm -rf node_modules
+      # End of new steps
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: npm run build
-
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
