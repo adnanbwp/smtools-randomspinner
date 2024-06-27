@@ -17,17 +17,18 @@ function App() {
     }
   }, []);
 
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
+  const showToast = (message, type = 'success', itemCount) => {
+    console.log('Showing toast:', { message, type, itemCount });
+    setToast({ message, type, itemCount });
   };
 
   const handleItemsLoaded = (newItems) => {
+    console.log('New items loaded:', newItems.length);
     setItems(newItems);
     saveItems(newItems);
     setSelectedItem(null);
     showToast('Items loaded successfully', 'success', newItems.length);
   };
-
   const handleSpinComplete = (item) => {
     setSelectedItem(item);
   };
@@ -64,6 +65,7 @@ function App() {
         <Toast 
           message={toast.message} 
           type={toast.type} 
+          itemCount={toast.itemCount}  // Add this line
           onClose={() => setToast(null)} 
         />
       )}
