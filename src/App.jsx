@@ -47,7 +47,7 @@ function App() {
 
     return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Random Item Selector</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Super Random Item Selector</h1>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-full lg:w-2/3">
           <SpinWheel items={items} onSpinComplete={handleSpinComplete} />
