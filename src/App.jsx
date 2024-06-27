@@ -23,7 +23,7 @@ function App() {
   };
 
   const handleItemsLoaded = (newItems) => {
-    console.log('New items loaded:', newItems.length);
+    console.log('New items loaded now:', newItems.length);
     setItems(newItems);
     saveItems(newItems);
     setSelectedItem(null);
